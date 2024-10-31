@@ -6,11 +6,18 @@ import streamlit as st
 def download_file_from_google_drive(file_id):
     url = f'https://drive.google.com/uc?id={file_id}'
     response = requests.get(url)
+    
+    # Print status code and headers for debugging
+    print(f"Response status code: {response.status_code}")
+    print(f"Response content type: {response.headers.get('Content-Type')}")
+    
     if response.status_code == 200:
+        print("Content received, attempting to load as pickle.")
         try:
             return pickle.loads(response.content)
-        except pickle.UnpicklingError:
-            raise Exception("The downloaded content is not a valid pickle file.")
+        except Exception as e:
+            print("Error loading pickle file:", e)
+            raise Exception("The downloaded content is not a valid pickle file or is corrupted.")
     else:
         raise Exception(f"Failed to download file: HTTP Status Code {response.status_code}")
 
@@ -28,7 +35,8 @@ except Exception as e:
 
 # Function to fetch poster image from TMDb API
 def fetch_poster(movie_id):
-    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=YOUR_API_KEY&language=en-US"
+    # Correctly format the URL for fetching the poster image
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=31dea30241045ff2b6e028a1ed1bf151&language=en-US"
     data = requests.get(url)
     data = data.json()
     poster_path = data.get('poster_path')
