@@ -5,20 +5,11 @@ import streamlit as st
 # Function to download file from Dropbox
 def download_file_from_dropbox(url):
     response = requests.get(url)
+    return pickle.loads(response.content)
 
-    # Check if the request was successful
-    if response.status_code != 200:
-        raise Exception(f"Failed to download file: HTTP Status Code {response.status_code}")
-
-    try:
-        # Load the content as a pickle
-        return pickle.loads(response.content)
-    except Exception as e:
-        raise Exception("The downloaded content is not a valid pickle file or is corrupted. Error: " + str(e))
-
-# Dropbox URLs for the files
-movie_list_url = 'https://www.dropbox.com/scl/fi/7i7vnl3zbfocwuoctvscl/movie_list.pkl?rlkey=509gp12jke633suvkfe2y8658&st=2u5y5rz4&dl=1'  # Movie list file URL
-similarity_url = 'https://www.dropbox.com/scl/fi/eb077copqhdrvmqs6lris/similarity.pkl?rlkey=vky04wfyjaf9jc06xx9nvmdq2&st=8sblkwvo&dl=1'  # Similarity file URL
+# Use the actual file URLs from Dropbox
+movie_list_url = 'https://www.dropbox.com/scl/fi/7i7vnl3zbfocwuoctvscl/movie_list.pkl?rlkey=509gp12jke633suvkfe2y8658&dl=1'  # Change dl=0 to dl=1
+similarity_url = 'https://www.dropbox.com/scl/fi/eb077copqhdrvmqs6lris/similarity.pkl?rlkey=vky04wfyjaf9jc06xx9nvmdq2&dl=1'  # Change dl=0 to dl=1
 
 # Load movies and similarity from Dropbox
 try:
@@ -30,7 +21,6 @@ except Exception as e:
 
 # Function to fetch poster image from TMDb API
 def fetch_poster(movie_id):
-    # Correctly format the URL for fetching the poster image
     url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=31dea30241045ff2b6e028a1ed1bf151&language=en-US"
     data = requests.get(url)
     data = data.json()
@@ -68,5 +58,6 @@ if st.button('Show Recommendation'):
     cols = st.columns(5)  # Create 5 columns for displaying recommended movies
     for idx, col in enumerate(cols):
         if idx < len(recommended_movie_names):
-            col.text(recommended_movie_names[idx])  # Show movie name
+            # Display movie name with increased font size
+            col.markdown(f"<h3 style='font-size: 20px;'>{recommended_movie_names[idx]}</h3>", unsafe_allow_html=True)  # Adjust font size as needed
             col.image(recommended_movie_posters[idx])  # Show movie poster
