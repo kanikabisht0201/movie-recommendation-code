@@ -2,11 +2,12 @@ import pickle
 import requests
 import streamlit as st
 
-# Function to download file from Dropbox
-def download_file_from_dropbox(url):
+# Function to download file from Google Drive
+def download_file_from_google_drive(file_id):
+    url = f'https://drive.google.com/uc?id={file_id}'
     response = requests.get(url)
 
-    # Check if the request was successful
+    # Debugging information
     if response.status_code != 200:
         raise Exception(f"Failed to download file: HTTP Status Code {response.status_code}")
 
@@ -16,16 +17,16 @@ def download_file_from_dropbox(url):
     except Exception as e:
         raise Exception("The downloaded content is not a valid pickle file or is corrupted. Error: " + str(e))
 
-# Dropbox URLs for the files
-movie_list_url = 'https://www.dropbox.com/scl/fi/7i7vnl3zbfocwuoctvscl/movie_list.pkl?rlkey=509gp12jke633suvkfe2y8658&st=2u5y5rz4&dl=1'  # Movie list file URL
-similarity_url = 'https://www.dropbox.com/scl/fi/eb077copqhdrvmqs6lris/similarity.pkl?rlkey=vky04wfyjaf9jc06xx9nvmdq2&st=8sblkwvo&dl=1'  # Similarity file URL
+# Use the actual file IDs from Google Drive
+movie_list_id = '1Fh33IwObUb3vwvuIMQTeY8oEtgTyUNZD'  # Movie list file ID
+similarity_id = '1zbyGYZYP_VJX_CtUwty16mEEiY8vI0l8'  # Similarity file ID
 
-# Load movies and similarity from Dropbox
+# Load movies and similarity from Google Drive
 try:
-    movies = download_file_from_dropbox(movie_list_url)
-    similarity = download_file_from_dropbox(similarity_url)
+    movies = download_file_from_google_drive(movie_list_id)
+    similarity = download_file_from_google_drive(similarity_id)
 except Exception as e:
-    st.error("Failed to load data from Dropbox: {}".format(e))
+    st.error("Failed to load data from Google Drive: {}".format(e))
     st.stop()
 
 # Function to fetch poster image from TMDb API
